@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -12,7 +13,7 @@ namespace VideoScreensaver
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App : System.Windows.Application
     {
         [StructLayout(LayoutKind.Sequential)]
         private struct RECT {
@@ -33,6 +34,7 @@ namespace VideoScreensaver
 
         [DllImport("user32.dll")]
         private static extern int SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+        
 
         private void OnStartup(object sender, StartupEventArgs e) {
             if (e.Args.Length > 0) {
@@ -48,11 +50,17 @@ namespace VideoScreensaver
                         return;
                 }
             }
-            new MainWindow(false).Show();
+
+            foreach (var screen in System.Windows.Forms.Screen.AllScreens)
+            {
+                new MainWindow(false,screen).Show();
+            }
+
+            
         }
 
         private void ShowInParent(IntPtr parentHwnd) {
-            MainWindow previewContent = new MainWindow(true);
+            MainWindow previewContent = new MainWindow(true,null);
             WindowInteropHelper windowHelper = new WindowInteropHelper(previewContent);
             windowHelper.Owner = parentHwnd;
             previewContent.WindowState = WindowState.Normal;
@@ -64,7 +72,7 @@ namespace VideoScreensaver
             previewContent.Height = 0;
             previewContent.ShowInTaskbar = false;
             previewContent.ShowActivated = false;  // Doesn't work, so we'll use SetForegroundWindow() to restore focus.
-            previewContent.Cursor = Cursors.Arrow;
+            previewContent.Cursor = System.Windows.Input.Cursors.Arrow;
             previewContent.ForceCursor = false;
 
             IntPtr currentFocus = GetForegroundWindow();

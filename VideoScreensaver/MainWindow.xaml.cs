@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,9 +16,14 @@ namespace VideoScreensaver {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    /// 
     public partial class MainWindow : Window {
         private bool preview;
-        private Point? lastMousePosition = null;  // Workaround for "MouseMove always fires when maximized" bug.
+        private System.Windows.Point? lastMousePosition = null;  // Workaround for "MouseMove always fires when maximized" bug.
+
+        // Determines whether debug info is printed on screen
+        const bool debugMode = true;
+
         private double volume {
             get { return FullScreenMedia.Volume; }
             set {
@@ -26,13 +32,20 @@ namespace VideoScreensaver {
             }
         }
 
-        public MainWindow(bool preview) {
+        public MainWindow(bool preview, System.Windows.Forms.Screen screen) {
             InitializeComponent();
             this.preview = preview;
             FullScreenMedia.Volume = PreferenceManager.ReadVolumeSetting();
             if (preview) {
                 ShowError("When fullscreen, control volume with up/down arrows or mouse wheel.");
             }
+            // Set the dimensions to that of the screen
+            var bounds = screen.Bounds;
+            this.Left = bounds.Left;
+            this.Top = bounds.Top;
+            this.Width = bounds.Width;
+            this.Height = bounds.Height;
+
         }
 
         private void ScrKeyDown(object sender, KeyEventArgs e) {
@@ -61,7 +74,7 @@ namespace VideoScreensaver {
 
         private void ScrMouseMove(object sender, MouseEventArgs e) {
             // Workaround for bug in WPF.
-            Point mousePosition = e.GetPosition(this);
+            System.Windows.Point mousePosition = e.GetPosition(this);
             if (lastMousePosition != null && mousePosition != lastMousePosition) {
                 EndFullScreensaver();
             }
@@ -80,7 +93,8 @@ namespace VideoScreensaver {
         // End the screensaver only if running in full screen. No-op in preview mode.
         private void EndFullScreensaver() {
             if (!preview) {
-                Close();
+                //Close();
+                Application.Current.Shutdown(); // This gets all windows, not just the current one
             }
         }
 
@@ -89,7 +103,10 @@ namespace VideoScreensaver {
             if (videoPaths.Count == 0) {
                 ShowError("This screensaver needs to be configured before any video is displayed.");
             } else {
+                // Maximise the window
+                this.WindowState = WindowState.Maximized;
                 FullScreenMedia.Source = new System.Uri(videoPaths[new Random().Next(videoPaths.Count)]);
+                
             }
         }
 
