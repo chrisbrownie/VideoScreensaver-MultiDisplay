@@ -1,2 +1,2 @@
 # VideoScreensaver-MultiDisplay
-Fork of VideoScreensaver supporting multiple displays
+Fork of [VideoSaver](https://sourceforge.net/projects/videosaver/) supporting multiple displays.
