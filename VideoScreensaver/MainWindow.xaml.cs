@@ -97,8 +97,7 @@ namespace VideoScreensaver
             } else {
                 // Maximise the window
                 this.WindowState = WindowState.Maximized;
-                FullScreenMedia.Source = new System.Uri(videoPaths[new Random().Next(videoPaths.Count)]);
-                
+                PlayNextVideo(sender, e);
             }
         }
 
@@ -111,7 +110,18 @@ namespace VideoScreensaver
         }
 
         private void MediaEnded(object sender, RoutedEventArgs e) {
-            FullScreenMedia.Position = new TimeSpan(0);
+            PlayNextVideo(sender, e);
+        }
+
+        /// <summary>
+        /// Plays the next video in the series on the media object on the form
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PlayNextVideo(object sender, RoutedEventArgs e)
+        {
+            List<String> videoPaths = PreferenceManager.ReadVideoSettings();
+            FullScreenMedia.Source = new System.Uri(videoPaths[new Random().Next(videoPaths.Count)]);
         }
     }
 }
