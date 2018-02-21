@@ -1,5 +1,9 @@
 # VideoScreensaver-MultiDisplay
+
+![Build Status - master](https://ci.appveyor.com/api/projects/status/github/chrisbrownie/videoscreensaver-multidisplay?branch=master&svg=true)
+
 Fork of [VideoSaver](https://sourceforge.net/projects/videosaver/) supporting multiple displays.
+
 
 ## Additional Cool Things
 
